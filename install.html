@@ -1,0 +1,98 @@
+1. 通过SSH 工具连接到你的VPS上（推荐使用Xshell 5）
+
+
+
+2. 复制以下命令，粘贴到软件中，并回车。
+
+wget --no-check-certificate https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocks.sh
+
+chmod +x shadowsocks.sh
+
+./shadowsocks.sh 2>&1 | tee shadowsocks.log
+
+
+
+3. 输入你想要设置的密码，并回车，再次回车，确认安装
+
+
+
+
+4. 等待5分钟左右，即可安装成功，安装成功之后就会通过屏幕输出，您的IP地址，端口，密码，及加密方式。
+
+至此，安装完成，您可以通过把相关信息配置到您的Shadowsocks软件中，愉快的使用了。
+
+注：请截图保存输出信息，一面丢失
+
+如果您想多用户使用，请配置 /etc/shadowsocks.json 这个文件。
+
+配置模版：
+
+{
+"server":"your_server_ip",
+"local_address": "127.0.0.1",
+"local_port":1080,
+"port_password":{
+"8989":"password0",
+"9001":"password1",
+"9002":"password2",
+"9003":"password3",
+"9004":"password4"
+},
+"timeout":300,
+"method":"aes-256-cfb",
+"fast_open": false
+}
+
+
+
+如遇到 在应用iptables防火墙规则时卡住
+
+修改配置
+vim /etc/sysconfig/iptables-config
+修改如下字段,表示重启不重新加载内核模块
+IPTABLES_MODULES_UNLOAD="no"
+配置后重启iptables
+/etc/init.d/iptables restart
+ 
+或直接reboot 重启服务器，再安装一遍。
+ 
+ 
+如果增加多用户配置的话，遇到如下错误
+ 
+INFO: loading config from /etc/shadowsocks.json
+/usr/lib/python2.6/site-packages/shadowsocks-2.9.0-py2.6.egg/shadowsocks/shell.py:219: DeprecationWarning: BaseException.message has been deprecated as of Python 2.6
+e.message)
+ERROR: found an error in config.json: No JSON object could be decoded
+
+
+
+使用mkdir -p /etc/shadowsocks/config.json
+
+
+
+vim /etc/shadowsocks/config.json
+
+使用如下配置：
+
+
+
+{
+    "server":"your_server_ip",
+    "local_address": "127.0.0.1",
+    "local_port":1080,
+    "port_password":{
+        "8989":"password0",
+        "9001":"password1",
+        "9002":"password2",
+        "9003":"password3",
+        "9004":"password4"
+    },
+    "timeout":300,
+    "method":"aes-256-cfb",
+    "fast_open": false
+}
+
+
+然后启动 shadowsocks
+
+/usr/bin/python /usr/bin/ssserver -c /etc/shadowsocks/config.json -d start
